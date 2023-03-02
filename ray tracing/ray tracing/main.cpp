@@ -1,20 +1,23 @@
-#include <iostream>
+ #include <iostream>
+#include "rtweekend.h"
 
 #include "color.h"
 #include "ray.h"
-#include "vec3.h"
+#include "hittable_list.h"
+#include "sphere.h"
 
-double hit_sphere(const point3& center, double radius, const ray& r) {
+ double hit_sphere(const point3& center, double radius, const ray& r) {
     vec3 oc = r.origin() - center;
-    auto a = dot(r.direction(), r.direction());
-    auto b = 2.0 * dot(oc, r.direction());
-    auto c = dot(oc, oc) - radius * radius;
-    auto discriminant = b * b - 4 * a * c;
+    auto a = r.direction().length_squared();
+    auto half_b = dot(oc, r.direction());
+    auto c = oc.length_squared() - radius * radius;
+
+    auto discriminant = half_b * half_b - a * c;
     if (discriminant < 0) {
         return -1.0;
     }
     else {
-        return (-b - sqrt(discriminant)) / (2.0 * a);
+        return (-half_b - sqrt(discriminant)) / a;
     }
 }
 
@@ -35,6 +38,12 @@ int main()
     const auto aspect_ratio = 16.0 / 9.0;
     const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
+
+    // World
+    hittable_list world;
+    world.add(make_shared<sphere>(point3(0, 0, -1), 0.5));
+    world.add(make_shared<sphere>(point3(0, -100.5, -1), 100));
+
 
     // Camera
 
