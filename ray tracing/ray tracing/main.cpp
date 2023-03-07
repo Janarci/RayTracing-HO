@@ -10,6 +10,7 @@
 #include "hittable_list.h"
 #include "material.h"
 #include "sphere.h"
+#include "RTImage.h"
 
 
 hittable_list random_scene() {
@@ -101,15 +102,18 @@ int main()
 
     // Image
 
-    const auto aspect_ratio = 3.0 / 2.0;
-    const int image_width = 1200;
+    const auto aspect_ratio = 16.0 / 9.0;
+    const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 500;
+    const int samples_per_pixel = 100;
     const int max_depth = 50;
+
+    RTImage* rtImage = new RTImage(image_width, image_height);
+
 
     // World
 
-    /*hittable_list world;
+    hittable_list world;
 
     auto R = cos(pi / 4);
 
@@ -122,10 +126,10 @@ int main()
     world.add(make_shared<sphere>(point3(0.0, 0.0, -1.0), 0.5, material_center));
     world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.5, material_left));
     world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), -0.45, material_left));
-    world.add(make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));*/
+    world.add(make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
 
 
-    auto world = random_scene();
+    //auto world = random_scene();
 
 
 
@@ -143,21 +147,27 @@ int main()
 
     // Render
 
+
+    cv::String filename = "E:/Downloads/ImageRender.png";
+
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
 
     for (int j = image_height - 1; j >= 0; --j) {
         std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+
         for (int i = 0; i < image_width; ++i) {
             color pixel_color(0, 0, 0);
+
             for (int s = 0; s < samples_per_pixel; ++s) {
                 auto u = (i + random_double()) / (image_width - 1);
                 auto v = (j + random_double()) / (image_height - 1);
                 ray r = cam.get_ray(u, v);
                 pixel_color += ray_color(r, world, max_depth);
             }
-            write_color(std::cout, pixel_color, samples_per_pixel);
+            rtImage->setPixel(i, j, pixel_color.x(), pixel_color.y(), pixel_color.z(), samples_per_pixel);
+            //write_color(std::cout, pixel_color, samples_per_pixel);
         }
     }
-
+    rtImage->saveImage(filename);
     std::cerr << "\nDone.\n";
 }
