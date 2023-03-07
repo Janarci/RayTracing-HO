@@ -5,7 +5,7 @@
 #include "rtweekend.h"
 
 #include "camera.h"
-#include "color.h"
+#include "colorUtils.h"
 #include "ray.h"
 #include "hittable_list.h"
 #include "material.h"
@@ -21,8 +21,8 @@ hittable_list random_scene() {
 
     for (int a = -11; a < 11; a++) {
         for (int b = -11; b < 11; b++) {
-            auto choose_mat = random_double();
-            point3 center(a + 0.9 * random_double(), 0.2, b + 0.9 * random_double());
+            auto choose_mat = rtweekend::random_double();
+            point3 center(a + 0.9 * rtweekend::random_double(), 0.2, b + 0.9 * rtweekend::random_double());
 
             if ((center - point3(4, 0.2, 0)).length() > 0.9) {
                 shared_ptr<material> sphere_material;
@@ -36,7 +36,7 @@ hittable_list random_scene() {
                 else if (choose_mat < 0.95) {
                     // metal
                     auto albedo = color::random(0.5, 1);
-                    auto fuzz = random_double(0, 0.5);
+                    auto fuzz = rtweekend::random_double(0, 0.5);
                     sphere_material = make_shared<metal>(albedo, fuzz);
                     world.add(make_shared<sphere>(center, 0.2, sphere_material));
                 }
@@ -65,7 +65,7 @@ hittable_list random_scene() {
  double hit_sphere(const point3& center, double radius, const ray& r) {
     vec3 oc = r.origin() - center;
     auto a = r.direction().length_squared();
-    auto half_b = dot(oc, r.direction());
+    auto half_b = vec3::dot(oc, r.direction());
     auto c = oc.length_squared() - radius * radius;
 
     auto discriminant = half_b * half_b - a * c;
@@ -93,9 +93,9 @@ hittable_list random_scene() {
          return color(0, 0, 0);
      }
 
-     vec3 unit_direction = unit_vector(r.direction());
+     vec3 unit_direction = vec3::unit_vector(r.direction());
      auto t = 0.5 * (unit_direction.y() + 1.0);
-     return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
+     return color(1.0, 1.0, 1.0) * (1.0 - t) + color(0.5, 0.7, 1.0) * t;
  }
 int main()
 {
@@ -159,15 +159,15 @@ int main()
             color pixel_color(0, 0, 0);
 
             for (int s = 0; s < samples_per_pixel; ++s) {
-                auto u = (i + random_double()) / (image_width - 1);
-                auto v = (j + random_double()) / (image_height - 1);
+                auto u = (i + rtweekend::random_double()) / (image_width - 1);
+                auto v = (j + rtweekend::random_double()) / (image_height - 1);
                 ray r = cam.get_ray(u, v);
                 pixel_color += ray_color(r, world, max_depth);
             }
-            rtImage->setPixel(i, j, pixel_color.x(), pixel_color.y(), pixel_color.z(), samples_per_pixel);
-            //write_color(std::cout, pixel_color, samples_per_pixel);
+            //rtImage->setPixel(i, j, pixel_color.x(), pixel_color.y(), pixel_color.z(), samples_per_pixel);
+            colorUtils::write_color(std::cout, pixel_color, samples_per_pixel);
         }
     }
-    rtImage->saveImage(filename);
+    //rtImage->saveImage(filename);
     std::cerr << "\nDone.\n";
 }
