@@ -105,6 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\Libraries\GDPARCM Libs\OPENCV\opencv\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,8 +135,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Hittable_list.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PoolWorkerThread.cpp" />
     <ClCompile Include="RTImage.cpp" />
+    <ClCompile Include="ThreadPool.cpp" />
+    <ClCompile Include="WorkerThread.cpp" />
+    <ClCompile Include="PoolableWorkerThread.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
@@ -143,11 +149,15 @@
     <ClInclude Include="hittable.h" />
     <ClInclude Include="hittable_list.h" />
     <ClInclude Include="material.h" />
+    <ClInclude Include="PoolWorkerThread.h" />
     <ClInclude Include="ray.h" />
     <ClInclude Include="RTImage.h" />
     <ClInclude Include="rtweekend.h" />
     <ClInclude Include="sphere.h" />
+    <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="vec3.h" />
+    <ClInclude Include="WorkerThread.h" />
+    <ClInclude Include="PoolableWorkerThread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

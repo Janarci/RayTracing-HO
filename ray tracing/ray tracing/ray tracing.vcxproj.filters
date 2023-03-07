@@ -21,6 +21,21 @@
     <ClCompile Include="RTImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WorkerThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PoolableWorkerThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PoolWorkerThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hittable_list.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vec3.h">
@@ -51,6 +66,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RTImage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WorkerThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PoolableWorkerThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PoolWorkerThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -49,4 +49,6 @@ private:
     vec3 u, v, w;
     double lens_radius;
 };
+
+
 #endif
