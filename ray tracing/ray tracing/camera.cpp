@@ -15,7 +15,7 @@ camera::camera(point3 lookfrom, point3 lookat, vec3 vup, double vfov, double asp
 	origin = lookfrom;
 	horizontal = u * focus_dist * viewport_width;
 	vertical = v * focus_dist * viewport_height ;
-	lower_left_corner = w * origin - horizontal / 2 - vertical / 2 - focus_dist;
+	lower_left_corner =  origin - horizontal / 2 - vertical / 2 - w *  focus_dist;
 
 	lens_radius = aperture / 2;
 }
