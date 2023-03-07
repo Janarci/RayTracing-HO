@@ -30,8 +30,8 @@ void RTImage::setPixel(int x, int y, float r, float g, float b, int samplesPerPi
 
 
     int rInt = static_cast<uchar>(256 * clamp(r, 0.0, 0.999));
-    int gInt = static_cast<uchar>(256 * clamp(r, 0.0, 0.999));
-    int bInt = static_cast<uchar>(256 * clamp(r, 0.0, 0.999));
+    int gInt = static_cast<uchar>(256 * clamp(g, 0.0, 0.999));
+    int bInt = static_cast<uchar>(256 * clamp(b, 0.0, 0.999));
 
     cv::Mat imgChannels[3];
     cv::split(*this->pixels, imgChannels);
