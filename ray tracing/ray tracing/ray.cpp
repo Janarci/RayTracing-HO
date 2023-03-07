@@ -18,5 +18,5 @@ vec3 ray::direction() const
 point3 ray::at(double t) const
 {
 	//***
-	return orig * dir + t;
+	return this->orig + this->dir * t;
 }

@@ -13,9 +13,9 @@ sphere::sphere(point3 cen, double r, std::shared_ptr<material> m): center(cen), 
 bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) const
 {
     vec3 oc = r.origin() - center;
-    auto a = r.direction().length_squared();
+    auto a = r.direction().lengthSquared();
     auto half_b = vec3::dot(oc, r.direction());
-    auto c = oc.length_squared() - radius * radius;
+    auto c = oc.lengthSquared() - radius * radius;
 
     auto discriminant = half_b * half_b - a * c;
     if (discriminant < 0)

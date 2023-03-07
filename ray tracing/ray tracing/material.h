@@ -18,9 +18,9 @@ public:
     virtual bool scatter(
         const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered
     ) const override {
-        auto scatter_direction = rec.normal + vec3::random_unit_vector();
+        auto scatter_direction = rec.normal + vec3::randomUnitVector();
 
-        if (scatter_direction.near_zero())
+        if (scatter_direction.nearZero())
             scatter_direction = rec.normal;
 
         scattered = ray(rec.p, scatter_direction);
@@ -39,8 +39,8 @@ public:
     virtual bool scatter(
         const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered
     ) const override {
-        vec3 reflected = vec3::reflect(vec3::unit_vector(r_in.direction()), rec.normal);
-        scattered = ray(rec.p, reflected +  vec3::random_in_unit_sphere() * fuzz);
+        vec3 reflected = vec3::reflect(vec3::unitVector(r_in.direction()), rec.normal);
+        scattered = ray(rec.p, reflected +  vec3::randomInUnitSphere() * fuzz);
         attenuation = albedo;
         return (vec3::dot(scattered.direction(), rec.normal) > 0);
     }
@@ -60,7 +60,7 @@ public:
         attenuation = color(1.0, 1.0, 1.0);
         double refraction_ratio = rec.front_face ? (1.0 / ir) : ir;
 
-        vec3 unit_direction = vec3::unit_vector(r_in.direction());
+        vec3 unit_direction = vec3::unitVector(r_in.direction());
         double cos_theta = fmin(vec3::dot(-unit_direction, rec.normal), 1.0);
         double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
 

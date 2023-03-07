@@ -64,9 +64,9 @@ hittable_list random_scene() {
 
  double hit_sphere(const point3& center, double radius, const ray& r) {
     vec3 oc = r.origin() - center;
-    auto a = r.direction().length_squared();
+    auto a = r.direction().lengthSquared();
     auto half_b = vec3::dot(oc, r.direction());
-    auto c = oc.length_squared() - radius * radius;
+    auto c = oc.lengthSquared() - radius * radius;
 
     auto discriminant = half_b * half_b - a * c;
     if (discriminant < 0) {
@@ -93,8 +93,8 @@ hittable_list random_scene() {
          return color(0, 0, 0);
      }
 
-     vec3 unit_direction = vec3::unit_vector(r.direction());
-     auto t = 0.5 * (unit_direction.y() + 1.0);
+     vec3 unit_direction = vec3::unitVector(r.direction());
+     auto t = 0.5 * (unit_direction.getY() + 1.0);
      return color(1.0, 1.0, 1.0) * (1.0 - t) + color(0.5, 0.7, 1.0) * t;
  }
 int main()
@@ -162,12 +162,12 @@ int main()
                 auto u = (i + rtweekend::random_double()) / (image_width - 1);
                 auto v = (j + rtweekend::random_double()) / (image_height - 1);
                 ray r = cam.get_ray(u, v);
-                pixel_color += ray_color(r, world, max_depth);
+                pixel_color = pixel_color +  ray_color(r, world, max_depth);
             }
-            //rtImage->setPixel(i, j, pixel_color.x(), pixel_color.y(), pixel_color.z(), samples_per_pixel);
-            colorUtils::write_color(std::cout, pixel_color, samples_per_pixel);
+            rtImage->setPixel(i, j, pixel_color.getX(), pixel_color.getY(), pixel_color.getZ(), samples_per_pixel);
+            //colorUtils::write_color(std::cout, pixel_color, samples_per_pixel);
         }
     }
-    //rtImage->saveImage(filename);
+    rtImage->saveImage(filename);
     std::cerr << "\nDone.\n";
 }
