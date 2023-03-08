@@ -10,21 +10,21 @@ private:
     vec3 horizontal;
     vec3 vertical;
     vec3 u, v, w;
-    double lens_radius;
+    float lens_radius;
 
 public:
     camera(
         point3 lookfrom,
         point3 lookat,
         vec3   vup,
-        double vfov, // vertical field-of-view in degrees
-        double aspect_ratio,
-        double aperture,
-        double focus_dist
+        float vfov, // vertical field-of-view in degrees
+        float aspect_ratio,
+        float aperture,
+        float focus_dist
     );
 
 
-    ray get_ray(double s, double t);
+    ray get_ray(float s, float t);
 
 
 };

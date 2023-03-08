@@ -5,12 +5,12 @@ sphere::sphere()
 	
 }
 
-sphere::sphere(point3 cen, double r, std::shared_ptr<material> m): center(cen), radius(r), mat_ptr(m)
+sphere::sphere(point3 cen, float r, std::shared_ptr<material> m): center(cen), radius(r), mat_ptr(m)
 {
 	
 }
 
-bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) const
+bool sphere::hit(const ray& r, float t_min, float t_max, hit_record& rec) const
 {
     vec3 oc = r.origin() - center;
     auto a = r.direction().length_squared();

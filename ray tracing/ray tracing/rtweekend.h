@@ -12,8 +12,8 @@ using std::shared_ptr;
 using std::make_shared;
 using std::sqrt;
 // Constants
-static const double infinity = std::numeric_limits<double>::infinity();
-static const double pi = 3.1415926535897932385;
+static const float infinity = std::numeric_limits<float>::infinity();
+static const float pi = 3.1415926535897932385;
 
 class rtweekend
 {
@@ -22,10 +22,10 @@ public:
 	
 
 
-	static double degrees_to_radians(double degrees);
-	static double clamp(double x, double min, double max);
-    static double random_double();
-	static double random_double(double min, double max);
+	static float degrees_to_radians(float degrees);
+	static float clamp(float x, float min, float max);
+    static float random_double();
+	static float random_double(float min, float max);
 };
 
 // Common Headers

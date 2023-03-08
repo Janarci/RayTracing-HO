@@ -74,7 +74,7 @@
 //    }
 //
 //    vec3 unit_direction = unit_vector(r.direction());
-//    auto t = 0.5 * (unit_direction.y() + 1.0);
+//    auto t = 0.5 * (unit_direction.getY() + 1.0);
 //    return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
 //}
 //
@@ -100,7 +100,7 @@
 //            //ColorUtils::writeColor(this->imageFile, pixels, raySamplesPerPixel);
 //            //pixelGroup.push_back(pixels);
 //
-//            this->image->setPixel(i, j, pixels.x(), pixels.y(), pixels.z(), this->samplesPerPixel);
+//            this->image->setPixel(i, j, pixels.getX(), pixels.getY(), pixels.getZ(), this->samplesPerPixel);
 //        }
 //    }
 //

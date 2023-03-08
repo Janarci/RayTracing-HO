@@ -1,7 +1,7 @@
 #include "camera.h"
 
-camera::camera(point3 lookfrom, point3 lookat, vec3 vup, double vfov, double aspect_ratio, double aperture,
-	double focus_dist)
+camera::camera(point3 lookfrom, point3 lookat, vec3 vup, float vfov, float aspect_ratio, float aperture,
+	float focus_dist)
 {
 	auto theta = rtweekend::degrees_to_radians(vfov);
 	auto h = tan(theta / 2);
@@ -20,10 +20,10 @@ camera::camera(point3 lookfrom, point3 lookat, vec3 vup, double vfov, double asp
 	lens_radius = aperture / 2;
 }
 
-ray camera::get_ray(double s, double t)
+ray camera::get_ray(float s, float t)
 {
         vec3 rd = vec3::random_in_unit_disk() * lens_radius ;
-        vec3 offset = u * rd.x() + v * rd.y();
+        vec3 offset = u * rd.getX() + v * rd.getY();
 
         return ray(
             origin + offset,

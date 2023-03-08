@@ -2,111 +2,113 @@
 
 #include "rtweekend.h"
 
-vec3::vec3(double e0, double e1, double e2): e{ e0, e1, e2 }
+vec3::vec3()
 {
-	
 }
 
-double vec3::x() const
+vec3::vec3(float x, float y, float z)
 {
-	return e[0];
+	this->x = x;
+	this->y = y;
+	this->z = z;
 }
 
-double vec3::y() const
+vec3::vec3(const vec3* vec)
 {
-	return e[1];
+	this->x = vec->x;
+	this->y = vec->y;
+	this->z = vec->z;
 }
 
-double vec3::z() const
+float vec3::getX() const
 {
-	return e[2];
+	return this->x;
+}
+
+float vec3::getY() const
+{
+	return this->y;
+}
+
+float vec3::getZ() const
+{
+	return this->z;
 }
 
 
-double vec3::operator[](int i) const
+
+vec3& vec3::operator*=(const float t)
 {
-	return e[i];
-}
-
-double& vec3::operator[](int i)
-{
-	return e[i];
-}
-
-
-
-vec3& vec3::operator*=(const double t)
-{
-	e[0] *= t;
-	e[1] *= t;
-	e[2] *= t;
+	x *= t;
+	y *= t;
+	z *= t;
 	return *this;
 }
 
 vec3 vec3::operator*(const vec3 v) const
 {
-	return vec3(e[0] * v.e[0], e[1] * v.e[1], e[2] * v.e[2]);
+	return vec3(x * v.getX(), y * v.getY(), z * v.getZ());
 }
 
-vec3 vec3::operator*(const double t) const
+vec3 vec3::operator*(const float t) const
 {
-	return vec3(e[0] * t, e[1] * t, e[2] * t);
+	return vec3(x * t, y * t, z * t);
 
 }
 
 vec3& vec3::operator+=(const vec3& v)
 {
-	e[0] += v.e[0];
-	e[1] += v.e[1];
-	e[2] += v.e[2];
+	x += v.getX();
+	y += v.getY();
+	z += v.getZ();
 	return *this;
 }
 
 
 vec3 vec3::operator+(const vec3& v) const
 {
-	return vec3(e[0] + v.e[0], e[1] + v.e[1], e[2] + v.e[2]);
+	return vec3(x + v.x, y + v.y, z + v.z);
 
 
 }
 
-vec3 vec3::operator+(const double t) const
+vec3 vec3::operator+(const float t) const
 {
-	return vec3(e[0] + t, e[1] + t, e[2] + t);
+	return vec3(x + t, y + t, z + t);
 
 }
 
 
 vec3 vec3::operator-() const
 {
-	return vec3(-e[0], -e[1], -e[2]);
+	return vec3(-x, -y, -z);
 }
 
 vec3 vec3::operator-(const vec3& v) const
 {
-	return vec3(e[0] - v.e[0], e[1] - v.e[1], e[2] - v.e[2]);
+	return vec3(x - v.x, y - v.y, z - v.z);
 
 }
 
-vec3 vec3::operator-(const double t) const
+vec3 vec3::operator-(const float t) const
 {
-	return vec3(e[0] - t, e[1] - t, e[2] - t);
+	return vec3(x - t, y - t, z - t);
 
 }
 
-vec3 vec3::operator/( double t)
+vec3 vec3::operator/(float t)
 {
 	return this->operator*(1/t);
 }
 
-double vec3::length() const
+float vec3::length() const
 {
 	return sqrt(length_squared());
 }
 
-double vec3::length_squared() const
+float vec3::length_squared() const
 {
-	return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
+	return x * x + y * y + z * z;
 }
 
 vec3 vec3::random()
@@ -114,7 +116,7 @@ vec3 vec3::random()
 	return vec3(rtweekend::random_double(), rtweekend::random_double(), rtweekend::random_double());
 }
 
-vec3 vec3::random(double min, double max)
+vec3 vec3::random(float min, float max)
 {
 	return vec3(rtweekend::random_double(min, max), rtweekend::random_double(min, max), rtweekend::random_double(min, max));
 
@@ -124,21 +126,21 @@ bool vec3::near_zero() const
 {
 	// Return true if the vector is close to zero in all dimensions.
 	const auto s = 1e-8;
-	return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
+	return (fabs(x) < s) && (fabs(y) < s) && (fabs(z) < s);
 }
 
-double vec3::dot(const vec3& u, const vec3& v)
+float vec3::dot(const vec3& u, const vec3& v)
 {
-	return u.e[0] * v.e[0]
-		+ u.e[1] * v.e[1]
-		+ u.e[2] * v.e[2];
+	return u.x * v.x
+		+ u.y * v.y
+		+ u.z * v.z;
 }
 
 vec3 vec3::cross(const vec3& u, const vec3& v)
 {
-	return vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
-	            u.e[2] * v.e[0] - u.e[0] * v.e[2],
-	            u.e[0] * v.e[1] - u.e[1] * v.e[0]);
+	return vec3(u.y * v.z - u.z * v.y,
+	            u.z * v.x - u.x * v.z,
+	            u.x * v.y - u.y * v.x);
 }
 
 vec3 vec3::unit_vector(vec3 v)
@@ -174,7 +176,7 @@ vec3 vec3::reflect(const vec3& v, const vec3& n)
 	return v - n * 2 * dot(v, n);
 }
 
-vec3 vec3::refract(const vec3& uv, const vec3& n, double etai_over_etat)
+vec3 vec3::refract(const vec3& uv, const vec3& n, float etai_over_etat)
 {
 	auto cos_theta = fmin(dot(-uv, n), 1.0);
 	vec3 r_out_perp =  (uv + n * cos_theta ) * etai_over_etat;
@@ -193,20 +195,20 @@ vec3 vec3::random_in_unit_disk()
 
 //
 //
-//vec3 vec3::operator*(const vec3& v, double t)
+//vec3 vec3::operator*(const vec3& v, float t)
 //{
 //	return v*t;
 //}
 //
 //vec3& vec3::operator+=(const vec3& v)
 //{
-//	e[0] += v.e[0];
-//	e[1] += v.e[1];
-//	e[2] += v.e[2];
+//	x += v.x;
+//	y += v.y;
+//	z += v.z;
 //	return *this;
 //}
 //
 //vec3 vec3::operator+(const vec3& u, const vec3& v)
 //{
-//	return vec3(u.e[0] + v.e[0], u.e[1] + v.e[1], u.e[2] + v.e[2]);
+//	return vec3(u.x + v.x, u.y + v.y, u.z + v.z);
 //}

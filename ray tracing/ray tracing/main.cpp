@@ -11,7 +11,7 @@
 #include "material.h"
 #include "sphere.h"
 #include "RTImage.h"
-#include "PoolableWorkerThread.h"
+#include "PoolWorkerThread.h"
 
 
 hittable_list random_scene() {
@@ -63,7 +63,7 @@ hittable_list random_scene() {
 }
 
 
- double hit_sphere(const point3& center, double radius, const ray& r) {
+ float hit_sphere(const point3& center, float radius, const ray& r) {
     vec3 oc = r.origin() - center;
     auto a = r.direction().length_squared();
     auto half_b = vec3::dot(oc, r.direction());
@@ -80,7 +80,6 @@ hittable_list random_scene() {
  color ray_color(const ray& r, const hittable& world, int depth) {
      hit_record rec;
 
-     // If we've exceeded the ray bounce limit, no more light is gathered.
      if (depth <= 0)
          return color(0, 0, 0);
 
@@ -95,11 +94,39 @@ hittable_list random_scene() {
      }
 
      vec3 unit_direction = vec3::unit_vector(r.direction());
-     auto t = 0.5 * (unit_direction.y() + 1.0);
+     auto t = 0.5 * (unit_direction.getY() + 1.0);
      return color(1.0, 1.0, 1.0) * (1.0 - t) + color(0.5, 0.7, 1.0) * t;
  }
+
+
+ void RTThreadTest(camera* cam, hittable_list world, int bounces, int samplesPerPixel, int imageWidth,
+     int imageHeight, RTImage* image, int lRow, int uRow) {
+
+     std::cout << "P3\n" << imageWidth << " " << imageHeight << "\n255\n";
+
+     for (int j = imageHeight - 1; j >= 0; --j) {
+         std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+
+         for (int i = lRow; i < uRow; ++i) {
+             color pixel_color(0, 0, 0);
+
+             for (int s = 0; s < samplesPerPixel; ++s) {
+                 auto u = (i + rtweekend::random_double()) / (imageWidth - 1);
+                 auto v = (j + rtweekend::random_double()) / (imageHeight - 1);
+                 ray r = cam->get_ray(u, v);
+                 pixel_color = pixel_color + ray_color(r, world, bounces);
+             }
+             image->setPixel(i, j, pixel_color.getX(), pixel_color.getY(), pixel_color.getZ(), samplesPerPixel);
+             //colorUtils::write_color(std::cout, pixel_color, samples_per_pixel);
+         }
+     }
+
+ }
+
 int main()
 {
+
+    std::vector<PoolWorkerThread*> threads;
 
     // Image
 
@@ -109,10 +136,10 @@ int main()
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int samples_per_pixel = 100;
     const int max_depth = 50;
-
+    int numThreads = 2;
     RTImage* rtImage = new RTImage(image_width, image_height);
 
-
+    
     // World
 
     hittable_list world;
@@ -149,28 +176,68 @@ int main()
 
     // Render
 
+    const int widthWindow = rint(image_width / numThreads);
+
+    int lRow = 0;
+    int uRow = widthWindow;
+
+    for (int i = 0; i < numThreads; i++)
+    {
+        PoolWorkerThread* RTThread = new PoolWorkerThread(i, 0, image_height, lRow, uRow);
+        RTThread->setValues(&cam, world, max_depth, samples_per_pixel, image_width, image_height);
+        RTThread->setImage(rtImage);
+        RTThread->start();
+        threads.push_back(RTThread);
+
+      /*  lRow = lRow + widthWindow;
+        uRow = uRow + widthWindow;*/
+
+    }
+    bool loop = true;
+    while (loop)
+    {
+	    for (int i = 0; i < numThreads; ++i)
+	    {
+            loop = false;
+            if (!threads[i]->finish)
+            {
+                loop = true;
+                break;
+            }
+	    }
+    }
+
+
+    //while (!RTThread2->finish)
+    //{
+
+    //}
     cv::String filename = "E:/Downloads/ImageRender.png";
 
-    std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
+   // std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
 
-    for (int j = image_height - 1; j >= 0; --j) {
-        std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
 
-        for (int i = 0; i < image_width; ++i) {
-            color pixel_color(0, 0, 0);
+    //for (int j = image_height - 1; j >= 0; --j) {
+    //    std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
 
-            for (int s = 0; s < samples_per_pixel; ++s) {
-                auto u = (i + rtweekend::random_double()) / (image_width - 1);
-                auto v = (j + rtweekend::random_double()) / (image_height - 1);
-                ray r = cam.get_ray(u, v);
-                pixel_color = pixel_color +  ray_color(r, world, max_depth);
-            }
-            rtImage->setPixel(i, j, pixel_color.x(), pixel_color.y(), pixel_color.z(), samples_per_pixel);
-            //colorUtils::write_color(std::cout, pixel_color, samples_per_pixel);
-        }
-    }
+    //    for (int i = 0; i < imageWidth; ++i) {
+    //        color pixel_color(0, 0, 0);
+
+    //        for (int s = 0; s < samples_per_pixel; ++s) {
+    //            auto u = (i + rtweekend::random_double()) / (image_width - 1);
+    //            auto v = (j + rtweekend::random_double()) / (image_height - 1);
+    //            ray r = cam.get_ray(u, v);
+    //            pixel_color = pixel_color +  ray_color(r, world, max_depth);
+    //        }
+    //        rtImage->setPixel(i, j, pixel_color.getX(), pixel_color.getY(), pixel_color.getZ(), samples_per_pixel);
+    //        //colorUtils::write_color(std::cout, pixel_color, samples_per_pixel);
+    //    }
+    //}
+
+    
     rtImage->saveImage(filename);
 
 
     std::cerr << "\nDone.\n";
 }
+

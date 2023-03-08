@@ -6,15 +6,15 @@ class sphere : public hittable {
 
 public:
     point3 center;
-    double radius;
+    float radius;
     std::shared_ptr<material> mat_ptr;
 
 public:
     sphere();
-    sphere(point3 cen, double r, std::shared_ptr<material> m);
+    sphere(point3 cen, float r, std::shared_ptr<material> m);
 
     virtual bool hit(
-        const ray& r, double t_min, double t_max, hit_record& rec) const override;
+        const ray& r, float t_min, float t_max, hit_record& rec) const override;
 
 
 };

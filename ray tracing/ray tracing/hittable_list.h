@@ -20,7 +20,7 @@ public:
     void add(shared_ptr<hittable> object);
 
 	bool hit(
-        const ray& r, double t_min, double t_max, hit_record& rec) const override;
+        const ray& r, float t_min, float t_max, hit_record& rec) const override;
 
    
 };

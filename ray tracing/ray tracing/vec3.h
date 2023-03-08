@@ -6,53 +6,56 @@ using std::sqrt;
 
 class vec3 {
 
+private:
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
+
 public:
-    double e[3];
 
 
 public:
-    vec3() : e{ 0,0,0 } {}
-    vec3(double e0, double e1, double e2);
-
-    double x() const;
-    double y() const;
-    double z() const;
+    vec3();
+    vec3(float x, float y, float z);
+    vec3(const vec3* vector);
 
 
+    float getX() const;
+    float getY() const;
+    float getZ() const;
 
-    double operator[](int i) const;
-    double& operator[](int i);
 
-    vec3& operator*=(const double t);
+
+    vec3& operator*=(const float t);
     vec3 operator*(const vec3 u) const;
-    vec3 operator*(const double t) const;
+    vec3 operator*(const float t) const;
 
 
     vec3& operator+=(const vec3& v);
     vec3 operator+(const vec3& v) const;
-    vec3 operator+(const double t) const;
+    vec3 operator+(const float t) const;
 
     vec3 operator-() const;
     vec3 operator-(const vec3& v) const;
-    vec3 operator-(const double t) const;
+    vec3 operator-(const float t) const;
 
-    vec3 operator/(double t);
+    vec3 operator/(float t);
 
     /*
-    vec3& operator/=(const double t) {
+    vec3& operator/=(const float t) {
         return *this *= 1 / t;
     }*/
 
-    double length() const;
-    double length_squared() const;
+    float length() const;
+    float length_squared() const;
 
 
     static vec3 random();
-    static vec3 random(double min, double max);
+    static vec3 random(float min, float max);
 
     bool near_zero() const;
 
-    static double dot(const vec3& u, const vec3& v);
+    static float dot(const vec3& u, const vec3& v);
     static vec3 cross(const vec3& u, const vec3& v);
     static vec3 unit_vector(vec3 v);
     static vec3 random_in_unit_sphere();
@@ -62,7 +65,7 @@ public:
 
     static vec3 reflect(const vec3& v, const vec3& n);
 
-    static vec3 refract(const vec3& uv, const vec3& n, double etai_over_etat);
+    static vec3 refract(const vec3& uv, const vec3& n, float etai_over_etat);
 
     static vec3 random_in_unit_disk();
 };
