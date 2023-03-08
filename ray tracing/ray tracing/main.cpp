@@ -11,7 +11,7 @@
 #include "material.h"
 #include "sphere.h"
 #include "RTImage.h"
-#include "PoolableWorkerThread.h"
+//#include "PoolableWorkerThread.h"
 
 
 hittable_list random_scene() {
