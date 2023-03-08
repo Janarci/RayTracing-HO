@@ -165,7 +165,7 @@ int main()
                 pixel_color = pixel_color +  ray_color(r, world, max_depth);
             }
             rtImage->setPixel(i, j, pixel_color.x(), pixel_color.y(), pixel_color.z(), samples_per_pixel);
-            colorUtils::write_color(std::cout, pixel_color, samples_per_pixel);
+            //colorUtils::write_color(std::cout, pixel_color, samples_per_pixel);
         }
     }
     rtImage->saveImage(filename);
