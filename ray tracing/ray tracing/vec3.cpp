@@ -72,12 +72,13 @@ vec3 vec3::operator-(const vec3 vec) const
 
 vec3 vec3::operator/(const vec3 vec) const
 {
-	return vec3(this->x / vec.x, this->y / vec.y, this->z / vec.z);
+	//return vec3(this->x / vec.x, this->y / vec.y, this->z / vec.z);
+	return zeros();
 }
 
 vec3 vec3::operator/(const float num) const
 {
-	return vec3(this->x / num, this->y / num, this->z / num);
+	return vec3(this->x, this->y, this->z) * (1 / num);
 }
 
 float vec3::length() const
@@ -104,8 +105,8 @@ float vec3::dot(const vec3 u, const vec3 v)
 vec3 vec3::cross(const vec3 u, const vec3 v)
 {
 	return vec3(u.y * v.z - u.z * v.y,
-		u.z * v.x - u.x * v.z,
-		u.x * v.y - u.y * v.x);
+				u.z * v.x - u.x * v.z,
+				u.x * v.y - u.y * v.x);
 }
 
 vec3 vec3::unitVector(const vec3 v)
@@ -115,19 +116,13 @@ vec3 vec3::unitVector(const vec3 v)
 
 vec3 vec3::random()
 {
-	float x = rtweekend::random_double();
-	float y = rtweekend::random_double();
-	float z = rtweekend::random_double();
-	return vec3(x, y, z);
+	return vec3(rtweekend::random_double(), rtweekend::random_double(), rtweekend::random_double());
 }
 
 vec3 vec3::random(float min, float max)
 {
-	float x = rtweekend::random_double(min, max);
-	float y = rtweekend::random_double(min, max);
-	float z = rtweekend::random_double(min, max);
 
-	return vec3(x, y, z);
+	return vec3(rtweekend::random_double(min, max), rtweekend::random_double(min, max), rtweekend::random_double(min, max));
 }
 
 vec3 vec3::randomUnitVector()
@@ -137,35 +132,29 @@ vec3 vec3::randomUnitVector()
 
 vec3 vec3::randomInUnitSphere()
 {
-	while (true)
-	{
-		vec3 p = vec3::random(-1.0f, 1.0f);
-		if (p.lengthSquared() >= 1.0f) continue;
+	while (true) {
+		auto p = vec3::random(-1, 1);
+		if (p.lengthSquared() >= 1) continue;
 		return p;
 	}
 }
 
 vec3 vec3::randomInUnitDisk()
 {
-	while (true)
-	{
-		vec3 p = vec3(rtweekend::random_double(-1.0f, 1.0f), rtweekend::random_double(-1.0f, 1.0f), 0.0f);
-		if (p.lengthSquared() >= 1.0f) continue;
+	while (true) {
+		auto p = vec3(rtweekend::random_double(-1, 1), rtweekend::random_double(-1, 1), 0);
+		if (p.lengthSquared() >= 1) continue;
 		return p;
 	}
 }
 
 vec3 vec3::randomInHemisphere(const vec3 normal)
 {
-	vec3 inUnitSphere = randomInUnitSphere();
-	if (dot(inUnitSphere, normal) > 0.0f)
-	{
-		return inUnitSphere;
-	}
+	vec3 in_unit_sphere = randomInUnitSphere();
+	if (dot(in_unit_sphere, normal) > 0.0) // In the same hemisphere as the normal
+		return in_unit_sphere;
 	else
-	{
-		return -inUnitSphere;
-	}
+		return -in_unit_sphere;
 }
 
 vec3 vec3::reflect(const vec3 v, const vec3 n)
@@ -175,10 +164,10 @@ vec3 vec3::reflect(const vec3 v, const vec3 n)
 
 vec3 vec3::refract(const vec3 uv, const vec3 n, float etaiOverEtat)
 {
-	float cosTheta = fmin(dot(-uv, n), 1.0f);
-	vec3 rPerpendicular = (uv + n * cosTheta) * etaiOverEtat;
-	vec3 rParallel = n * -sqrt(fabs(1.0f - rPerpendicular.lengthSquared()));
-	return rPerpendicular + rParallel;
+	auto cos_theta = fmin(dot(-uv, n), 1.0);
+	vec3 r_out_perp = (uv + n * cos_theta) * etaiOverEtat;
+	vec3 r_out_parallel = n * -sqrt(fabs(1.0 - r_out_perp.lengthSquared()));
+	return r_out_perp + r_out_parallel;
 }
 
 vec3 vec3::lerp(const vec3 start, const vec3 end, float delta)
