@@ -94,6 +94,10 @@ void PoolWorkerThread::run()
 		            ray r = cam->get_ray(u, v);
 		            pixel_color = pixel_color +  ray_color(r, world, bounces);
 		        }
+		        while (image->critical)
+		        {
+			        
+		        }
 		        image->setPixel(i, j, pixel_color.getX(), pixel_color.getY(), pixel_color.getZ(), samplesPerPixel);
 		        //colorUtils::write_color(std::cout, pixel_color, samples_per_pixel);
 		    }

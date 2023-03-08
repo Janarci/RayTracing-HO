@@ -15,9 +15,10 @@ public:
 	void setPixel(int x, int y, float r, float g, float b, int samplesPerPixel);
 	void saveImage(cv::String &filename) const;
 
-
+	bool critical;
 
 private:
+	
 	std::unique_ptr<cv::Mat> pixels;
 	int imageWidth;
 	int imageHeight;

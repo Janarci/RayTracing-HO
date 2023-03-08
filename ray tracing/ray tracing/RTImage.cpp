@@ -21,7 +21,7 @@ RTImage::RTImage(const int imageWidth, const int imageHeight)
 
 void RTImage::setPixel(int x, int y, float r, float g, float b, int samplesPerPixel)
 {
-
+    critical = true;
     auto scale = 1.0 / samplesPerPixel;
 
     r = sqrt(scale * r);
@@ -43,7 +43,7 @@ void RTImage::setPixel(int x, int y, float r, float g, float b, int samplesPerPi
     cv::merge(imgChannels, 3, *this->pixels);
 
     // Write the translated [0,255] value of each color component.
-   
+    critical = false;
 
 
 }
