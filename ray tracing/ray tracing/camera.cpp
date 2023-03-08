@@ -8,8 +8,8 @@ camera::camera(point3 lookfrom, point3 lookat, vec3 vup, double vfov, double asp
 	auto viewport_height = 2.0 * h;
 	auto viewport_width = aspect_ratio * viewport_height;
 
-	w = vec3::unitVector(lookfrom - lookat);
-	u = vec3::unitVector(vec3::cross(vup, w));
+	w = vec3::unit_vector(lookfrom - lookat);
+	u = vec3::unit_vector(vec3::cross(vup, w));
 	v = vec3::cross(w, u);
 
 	origin = lookfrom;
@@ -22,8 +22,8 @@ camera::camera(point3 lookfrom, point3 lookat, vec3 vup, double vfov, double asp
 
 ray camera::get_ray(double s, double t)
 {
-        vec3 rd = vec3::randomInUnitDisk() * lens_radius ;
-        vec3 offset = u * rd.getX() + v * rd.getY();
+        vec3 rd = vec3::random_in_unit_disk() * lens_radius ;
+        vec3 offset = u * rd.x() + v * rd.y();
 
         return ray(
             origin + offset,
