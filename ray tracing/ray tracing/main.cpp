@@ -19,7 +19,6 @@ hittable_list random_scene() {
 
     auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
     world.add(make_shared<sphere>(point3(0, -1000, 0), 1000, ground_material));
-    int circlecount = 0;
 
     for (int i = 0; i < 3; ++i)
     {
@@ -52,9 +51,7 @@ hittable_list random_scene() {
                         world.add(make_shared<sphere>(center, 0.2, sphere_material));
 
                     }
-                    circlecount++;
 
-                    std::cout << "cirlces" << circlecount << std::endl;
 
                 }
             }
@@ -142,19 +139,23 @@ int main()
 
     std::vector<PoolWorkerThread*> threads;
 
+    Semaphores* countingSem = new Semaphores(0);
+    Semaphores* mutexSem = new Semaphores(1);
+
     // Image
 
-    const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 400;
+    const auto aspect_ratio = 16.0f/9.0f;
+    const int image_width = 1080;
     //divide width by cores
-    const int image_height = static_cast<int>(image_width / aspect_ratio);
-    //const int image_height = 400;
+    //const int image_height = static_cast<int>(image_width / aspect_ratio);
+    const int image_height = 1080;
     const int samples_per_pixel = 100;
     const int max_depth = 50;
-    int numThreads = 24;
+    int numThreads = 16;
     RTImage* rtImage = new RTImage(image_width, image_height);
 
-    
+
+
     // World
 
     //hittable_list world;
@@ -199,10 +200,11 @@ int main()
     for (int i = 0; i < numThreads; i++)
     {
         PoolWorkerThread* RTThread = new PoolWorkerThread(i, 0, image_height, lRow, uRow);
-        RTThread->setValues(&cam, world, max_depth, samples_per_pixel, image_width, image_height);
+        threads.push_back(RTThread);
+
+    	RTThread->setValues(&cam, world, max_depth, samples_per_pixel, image_width, image_height, threads,countingSem, mutexSem);
         RTThread->setImage(rtImage);
         RTThread->start();
-        threads.push_back(RTThread);
 
         lRow = lRow + widthWindow;
         uRow = uRow + widthWindow;
@@ -219,6 +221,7 @@ int main()
                 loop = true;
                 break;
             }
+
 	    }
     }
 

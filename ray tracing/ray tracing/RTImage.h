@@ -15,7 +15,7 @@ public:
 	void setPixel(int x, int y, float r, float g, float b, int samplesPerPixel);
 	void saveImage(cv::String &filename) const;
 
-	bool critical;
+	int critical = 0;
 
 private:
 	

@@ -14,8 +14,13 @@ PoolWorkerThread::PoolWorkerThread(int id, int lCol, int uCol, int lRow, int uRo
 		finish = false;
 }
 
+int PoolWorkerThread::getThreadID()
+{
+	return this->id;
+}
+
 void PoolWorkerThread::setValues(camera* cam, hittable_list world, int bounces, int samplesPerPixel, int imageWidth,
-	int imageHeight)
+                                 int imageHeight, std::vector<PoolWorkerThread*> threads, Semaphores* countingSem, Semaphores* mutexSem)
 {
 
 	this->cam = cam;
@@ -24,6 +29,9 @@ void PoolWorkerThread::setValues(camera* cam, hittable_list world, int bounces, 
 	this->samplesPerPixel = samplesPerPixel;
 	this->imageWidth = imageWidth;
 	this->imageHeight = imageHeight;
+	this->threads = threads;
+	this->countingSem = countingSem;
+	this->mutexSem = mutexSem;
 }
 
 color PoolWorkerThread::ray_color(const ray& r, const hittable_list& world, int bounces)
@@ -49,29 +57,6 @@ color PoolWorkerThread::ray_color(const ray& r, const hittable_list& world, int 
 	return color(1.0, 1.0, 1.0) * (1.0 - t) + color(0.5, 0.7, 1.0) * t;
 }
 
-void PoolWorkerThread::threadTest(camera* cam, hittable_list world, int bounces, int samplesPerPixel, int imageWidth,
-	int imageHeight, RTImage* image, int lRow, int uRow)
-{
-	std::cout << "P3\n" << imageWidth << " " << imageHeight << "\n255\n";
-
-	for (int j = imageHeight - 1; j >= 0; --j) {
-		std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
-
-		for (int i = lRow; i < uRow; ++i) {
-			color pixel_color(0, 0, 0);
-
-			for (int s = 0; s < samplesPerPixel; ++s) {
-				auto u = (i + rtweekend::random_double()) / (imageWidth - 1);
-				auto v = (j + rtweekend::random_double()) / (imageHeight - 1);
-				ray r = cam->get_ray(u, v);
-				pixel_color = pixel_color + ray_color(r, world, bounces);
-			}
-			image->setPixel(i, j, pixel_color.getX(), pixel_color.getY(), pixel_color.getZ(), samplesPerPixel);
-			//colorUtils::write_color(std::cout, pixel_color, samples_per_pixel);
-		}
-	}
-}
-
 void PoolWorkerThread::setImage(RTImage* image)
 {
 	this->image = image;
@@ -80,7 +65,7 @@ void PoolWorkerThread::setImage(RTImage* image)
 void PoolWorkerThread::run()
 {
 
-	std::cout << "P3\n" << imageWidth << " " << imageHeight << "\n255\n";
+	//std::cout << "P3\n" << imageWidth << " " << imageHeight << "\n255\n";
 
 		for (int j = uCol - 1; j >= lCol; --j) {
 		    std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
@@ -94,13 +79,42 @@ void PoolWorkerThread::run()
 		            ray r = cam->get_ray(u, v);
 		            pixel_color = pixel_color +  ray_color(r, world, bounces);
 		        }
-		        while (image->critical)
-		        {
-			        
-		        }
-		        image->setPixel(i, j, pixel_color.getX(), pixel_color.getY(), pixel_color.getZ(), samplesPerPixel);
+
+
+
+
+				//bool loop = true;
+				//while (loop)
+				//{
+
+				//	for (int a = 0; a < threads.size(); ++a)
+				//	{
+				//		
+
+				//		if (threads[a]->getThreadID() == image->critical)
+				//		{
+				//			image->setPixel(i, j, pixel_color.getX(), pixel_color.getY(), pixel_color.getZ(), samplesPerPixel);
+
+				//			loop = false;
+				//			break;
+				//		}
+				//		if (image->critical >= threads.size())
+				//		{
+
+				//			image->critical = 0;
+				//		}
+
+				//	}
+
+				//}
+
+				this->mutexSem->acquire();
+
+		    	image->setPixel(i, j, pixel_color.getX(), pixel_color.getY(), pixel_color.getZ(), samplesPerPixel);
+				this->mutexSem->release();
 		        //colorUtils::write_color(std::cout, pixel_color, samples_per_pixel);
 		    }
 		}
+	this->countingSem->release();
 	finish = true;
 }

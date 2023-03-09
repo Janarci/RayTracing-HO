@@ -9,7 +9,7 @@
 #include "RTImage.h"
 #include "vec3.h"
 #include "hittable_list.h"
-
+#include "Semaphores.h"
 
 
 class PoolWorkerThread : public WorkerThread
@@ -19,11 +19,9 @@ public:
 	~PoolWorkerThread();
 
 	int getThreadID();
-	void setValues(camera* cam, hittable_list world, int bounces, int samplesPerPixel, int imageWidth, int imageHeight);
+	void setValues(camera* cam, hittable_list world, int bounces, int samplesPerPixel, int imageWidth, int imageHeight, std::vector<PoolWorkerThread*> threads, Semaphores* countingSem, Semaphores* mutexSem);
 	void setImage(RTImage* image);
 	color ray_color(const ray& r, const hittable_list& world, int bounces);
-	void threadTest(camera* cam, hittable_list world, int bounces, int samplesPerPixel, int imageWidth,
-		int imageHeight, RTImage* image, int lRow, int uRow);
 	void run() override;
 	bool finish = false;
 
@@ -41,7 +39,13 @@ private:
 	int samplesPerPixel;
 	int imageWidth;
 	int imageHeight;
+	int critical;
 	RTImage* image;
+	std::vector<PoolWorkerThread*> threads;
+
+	Semaphores* countingSem;
+	Semaphores* mutexSem;
+
 };
 
 
